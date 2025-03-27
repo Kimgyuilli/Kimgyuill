@@ -21,12 +21,9 @@ public class MemberController {
 
     @PostMapping("/member/save")
     public String save(@ModelAttribute MemberDTO memberDTO) {
-        System.out.println("이메일: " + memberDTO.getMemberEmail());
-        System.out.println("비밀번호: " + memberDTO.getMemberPassword());
-        System.out.println("이름: " + memberDTO.getMemberName());
-
-        memberService.save(memberDTO);
-
+        System.out.println(memberDTO);
         return "index";
     }
+
+
 }

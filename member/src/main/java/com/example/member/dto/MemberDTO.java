@@ -7,11 +7,11 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @ToString
+@NoArgsConstructor
 public class MemberDTO {
     private Long id;
+    private String memberName;
     private String memberEmail;
     private String memberPassword;
-    private String memberName;
 }
