@@ -23,7 +23,7 @@ public class MemberController {
     public String save(@ModelAttribute MemberDTO memberDTO) {
         System.out.println(memberDTO);
         memberService.save(memberDTO);
-        return "index";
+        return "login";
     }
 
 

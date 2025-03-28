@@ -1,6 +1,7 @@
 package com.example.member.service;
 
 
+import com.example.member.domain.MemberEntity;
 import com.example.member.dto.MemberDTO;
 import com.example.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,8 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     public void save(MemberDTO memberDTO) {
+        MemberEntity memberEntity = MemberEntity.toMemberEntity(memberDTO);
+        memberRepository.save(memberEntity);
 
     }
 }
