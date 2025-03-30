@@ -79,4 +79,15 @@ public class MemberService {
     public void deleteById(Long id) {
         memberRepository.deleteById(id);
     }
+
+    public String emailCheck(String memberEmail) {
+        Optional<MemberEntity> optionalMemberEntity = memberRepository.findByMemberEmail(memberEmail);
+        if(optionalMemberEntity.isPresent()) {
+            // 조회결과 존재 -> 사용 불가
+            return null;
+        } else {
+            // 사용 가능
+            return "ok";
+        }
+    }
 }
