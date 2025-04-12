@@ -45,4 +45,16 @@ public class Board extends BaseEntity {
                 .fileAttached(0) // 파일 없음
                 .build();
     }
+
+    public static Board toUpdateEntity(BoardDTO boardDTO) {
+        return Board.builder()
+                .id(boardDTO.getId())
+                .boardWriter(boardDTO.getBoardWriter())
+                .boardPass(boardDTO.getBoardPass())
+                .boardTitle(boardDTO.getBoardTitle())
+                .boardContents(boardDTO.getBoardContents())
+                .boardHits(boardDTO.getBoardHits())
+                .fileAttached(0) // 파일 없음
+                .build();
+    }
 }
