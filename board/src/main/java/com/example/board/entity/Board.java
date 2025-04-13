@@ -4,6 +4,9 @@ import com.example.board.dto.BoardDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -34,6 +37,9 @@ public class Board extends BaseEntity {
     @Column
     private int fileAttached; // 1 or 0
 
+    @Builder.Default
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<BoardFile> boardFileList = new ArrayList<>();
 
     public static Board toSaveEntity(BoardDTO boardDTO) {
         return Board.builder()
@@ -43,6 +49,17 @@ public class Board extends BaseEntity {
                 .boardContents(boardDTO.getBoardContents())
                 .boardHits(0)
                 .fileAttached(0) // 파일 없음
+                .build();
+    }
+
+    public static Board toSaveFileEntity(BoardDTO boardDTO){
+        return Board.builder()
+                .boardWriter(boardDTO.getBoardWriter())
+                .boardPass(boardDTO.getBoardPass())
+                .boardTitle(boardDTO.getBoardTitle())
+                .boardContents(boardDTO.getBoardContents())
+                .boardHits(0)
+                .fileAttached(1) // 파일 있음
                 .build();
     }
 

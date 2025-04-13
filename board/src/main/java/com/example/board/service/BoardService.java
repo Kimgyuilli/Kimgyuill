@@ -2,6 +2,8 @@ package com.example.board.service;
 
 import com.example.board.dto.BoardDTO;
 import com.example.board.entity.Board;
+import com.example.board.entity.BoardFile;
+import com.example.board.repository.BoardFileRepository;
 import com.example.board.repository.BoardRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +12,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,13 +25,32 @@ import java.util.Optional;
 public class BoardService {
 
     private final BoardRepository boardRepository;
+    private final BoardFileRepository boardFileRepository;
 
-    public void save(BoardDTO boardDTO) {
+    public void save(BoardDTO boardDTO) throws IOException {
 
-        Board saveEntity = Board.toSaveEntity(boardDTO);
+        if (boardDTO.getBoardFile().isEmpty()) {
+            // 첨부파일 없음
+            Board saveEntity = Board.toSaveEntity(boardDTO);
+            boardRepository.save(saveEntity);
+        } else{
+            // 첨부파일 있음
+            Board board = Board.toSaveFileEntity(boardDTO);
+            Long savedId = boardRepository.save(board).getId();
+            Board boardIdEntity = boardRepository.findById(savedId).get();
 
-        boardRepository.save(saveEntity);
+            for (MultipartFile boardFile: boardDTO.getBoardFile()){
+                String originalFileName = boardFile.getOriginalFilename();
+                String storedFileName = System.currentTimeMillis() + "_" + originalFileName;
+                String savePath = "C:/Users/rlarb/coding/UnivImg/" + storedFileName;
 
+                boardFile.transferTo(new File(savePath));
+
+
+                BoardFile boardFileEntity =  BoardFile.toBoardFileEntity(board, originalFileName, storedFileName);
+                boardFileRepository.save(boardFileEntity);
+            }
+        }
     }
 
     public List<BoardDTO> findAll() {
@@ -45,11 +69,12 @@ public class BoardService {
         boardRepository.updateHits(id);
     }
 
+    @Transactional
     public BoardDTO findById(Long id) {
         Optional<Board> optionalBoard = boardRepository.findById(id);
         if (optionalBoard.isPresent()) {
             Board board = optionalBoard.get();
-            return BoardDTO.toBoardDTO(board);
+            return BoardDTO.toBoardDTO(board); // 이 시점에 Lazy 로딩된 boardFileList 접근 가능
         } else {
             return null;
         }
