@@ -1,2 +1,2 @@
 # Kimgyuill
-Gyuill's Assignment Repository
+코딩레시피 클론코딩
